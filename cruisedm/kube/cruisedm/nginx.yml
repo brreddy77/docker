@@ -1,0 +1,36 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: legacy-lb
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: legacy-lb
+        env: cruise-dm
+    spec:
+      containers:
+      - name: legacy-lb
+        image: my-nginx
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: legacy-lb
+  labels:
+    app: legacy-lb
+    env: cruise-dm
+spec:
+  selector:
+    app: legacy-lb
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP

@@ -1,0 +1,9 @@
+version: '2'
+services:
+  mynginx:
+    container_name: mynginx
+    image: nginx:latest
+    ports: 
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf

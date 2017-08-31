@@ -1,0 +1,19 @@
+version: '2'
+services:
+  mongo:
+    image: docker.infra.tstllc.net/lib/mongo:3.2.10
+    container_name: mongo
+    command: mongod --wiredTigerCacheSizeGB 2
+    ports:
+      - "27017:27017"
+    environment:
+      MONGODB_DATABASE: admin
+      MONGODB_USER: appuseradmin
+      MONGODB_PASS: '@ppwr!te'
+    networks:
+      - cruisedm
+    volumes:
+      - ./data:/data/db
+networks:
+  cruisedm:
+    external: true

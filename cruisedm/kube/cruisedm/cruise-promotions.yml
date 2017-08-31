@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cruise-promotions
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cruise-promotions
+        env: cruise-dm
+    spec:
+      containers:
+      - name: cruise-promotions
+        image: docker.infra.tstllc.net/travel/cruise-promotions
+        command:
+        - /opt/web/bin/cruise-promotions-web
+        - -Dpidfile.path=/dev/null
+        - -Dap.config.file=/opt/web/conf/travel/dev/app.rancher.cfg
+        - -Dapp.name=cruise-promotions
+        ports:
+        - containerPort: 9000
+          name: http
+          protocol: TCP
+      imagePullSecrets:
+      - name: tst-docker
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cruise-promotions
+  labels:
+    app: cruise-promotions
+    env: cruise-dm
+spec:
+  selector:
+    app: cruise-promotions
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 9000
+    protocol: TCP

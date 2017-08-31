@@ -1,0 +1,97 @@
+version: '2'
+services:
+  legacy-lb:
+    container_name: legacy-lb
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    links:
+      - cruise-promotions:cruise-promotions
+    networks:
+      - cruisedm
+
+  cruise:
+    image: docker.infra.tstllc.net/travel/cruise
+    container_name: cruise
+    command: >
+      -Dap.config.file=/opt/web/conf/travel/dev/app.rancher.cfg
+      -Dapp.name=cruise
+    environment:
+      - JAVA_OPTS=-Xms3g -Xmx3g -XX:MetaspaceSize=2048M
+    ports:
+      - 9004:9000
+#    volumes:
+#      - /Users/ravi/dev/tsttravel/cruise/web/target/universal/stage:/opt/web
+#    links:
+#      - cruise-promotions:cruise-promotions
+#    external_links:
+#      - mongo:mongo
+    extra_hosts:
+      - "mysql:172.16.123.1"
+      - "mongo:172.16.123.1"
+    networks:
+      - cruisedm
+
+  data-manager:
+    image: docker.infra.tstllc.net/travel/data-manager
+    container_name: data-manager
+    command: >
+      -Dap.config.file=/opt/web/conf/travel/dev/app.rancher.cfg
+      -Dapp.name=data-manager
+    environment:
+      - JAVA_OPTS=-Xms3g -Xmx3g -XX:MetaspaceSize=2048M
+    ports:
+      - 9008:9000
+ #   links:
+ #     - cruise-promotions:cruise-promotions
+ #   external_links:
+ #     - mongo:mongo
+    extra_hosts:
+      - "mysql:172.16.123.1"
+      - "mongo:172.16.123.1"
+    networks:
+      - cruisedm
+
+  cruise-promotions:
+    image: docker.infra.tstllc.net/travel/cruise-promotions
+    container_name: cruise-promotions
+    command: >
+      -Dap.config.file=/opt/web/conf/travel/dev/app.rancher.cfg
+      -Dapp.name=cruise-promotions
+    environment:
+      - JAVA_OPTS=-Xms3g -Xmx3g -XX:MetaspaceSize=2048M
+    ports:
+      - 9012:9000
+#    external_links:
+#      - mongo:mongo
+    extra_hosts:
+      - "mysql:172.16.123.1"
+      - "mongo:172.16.123.1"
+    networks:
+      - cruisedm
+
+  trip:
+    image: docker.infra.tstllc.net/travel/trip
+    container_name: trip
+    command: >
+      -Dap.config.file=/opt/web/conf/travel/dev/app.rancher.cfg
+      -Dapp.name=trip
+    environment:
+      - JAVA_OPTS=-Xms3g -Xmx3g -XX:MetaspaceSize=2048M
+    ports:
+      - 9016:9000
+#    links:
+#      - cruise-promotions:cruise-promotions
+#    external_links:
+#      - mongo:mongo
+    extra_hosts:
+      - "mysql:172.16.123.1"
+      - "mongo:172.16.123.1"
+    networks:
+      - cruisedm
+
+networks:
+  cruisedm:
+    external: true

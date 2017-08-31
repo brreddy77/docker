@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: data-manager
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: data-manager
+        env: cruise-dm
+    spec:
+      containers:
+      - name: data-manager
+        image: docker.infra.tstllc.net/travel/data-manager
+        ports:
+        - containerPort: 9000
+          name: http
+          protocol: TCP

@@ -1,0 +1,19 @@
+version: '2'
+services:
+  cruise-promotions:
+    image: docker.infra.tstllc.net/travel/cruise-promotions
+    container_name: cruise-promotions
+    command: >
+      -Dap.config.file=/opt/web/conf/travel/dev/app.rancher.cfg
+    environment:
+      JAVA_OPTS: "-Xms3g -Xmx3g -XX:MetaspaceSize=2048M"
+    ports:
+      - 9000:9000
+    external_links:
+      - mysql:mysql
+      - mongo:mongo
+    networks:
+      - cruisedm
+networks:
+  cruisedm:
+    external: true
